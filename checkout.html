@@ -6,13 +6,13 @@
   <title>Checkout</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script src="https://www.paypal.com/sdk/js?client-id=AcXlo_UDik9Bied_WM3fOyems83Ode9djTBk9cmqCtqGgSt2Nu4pSk24OANf0KpHCNxilEAE8WKcakyb"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AeYL-WMHpHaX4vOP7x2rtXgcvbcn0EenLEm1IOrx1kaZOlI6z9Xiet1g0bL6GzaBr-q0zAD8cK-EGPAr&currency=CAD&enable-funding=applepay"></script>
 </head>
 <body>
 <header>
     <h1>Julianna Jarvis Art</h1>
     <nav>
-      <a href="index.html">Home</a>
+      <a href="home.html">Home</a>
       <a href="#about">About</a>
       <a href="checkout.html" class="cart-link">
         <img src="images/cart.png" alt="Cart">
@@ -68,32 +68,32 @@
     }
   
     function updateSummary() {
-      const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0);
-      const tax = total * 0.12;
-      const grandTotal = (total + tax).toFixed(2);
-  
-      const summaryHTML = cart.length > 0 ? `
-        <p><strong>Subtotal:</strong> $${total.toFixed(2)}</p>
-        <p><strong>Tax (12%):</strong> $${tax.toFixed(2)}</p>
-        <p><strong>Total:</strong> $${grandTotal}</p>
-      ` : '';
-  
-      document.getElementById('summary').innerHTML = summaryHTML;
-  
-      if (cart.length > 0) {
-        document.getElementById('paypal-button-container').innerHTML = ''; // Ensure the container is cleared
-        paypal.Buttons({
-          createOrder: (data, actions) => actions.order.create({
-            purchase_units: [{
-              amount: { value: grandTotal }
-            }]
-          }),
-          onApprove: (data, actions) => actions.order.capture().then(details => {
-            alert('Transaction completed by ' + details.payer.name.given_name);
-          })
-        }).render('#paypal-button-container');
-      }
+    const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0);
+    const tax = total * 0.12;
+    const grandTotal = (total + tax).toFixed(2);
+
+    const summaryHTML = cart.length > 0 ? `
+      <p><strong>Subtotal:</strong> $${total.toFixed(2)}</p>
+      <p><strong>Tax (12%):</strong> $${tax.toFixed(2)}</p>
+      <p><strong>Total:</strong> $${grandTotal}</p>
+    ` : '';
+
+    document.getElementById('summary').innerHTML = summaryHTML;
+
+    if (cart.length > 0) {
+      document.getElementById('paypal-button-container').innerHTML = '';
+      paypal.Buttons({
+        createOrder: (data, actions) => actions.order.create({
+          purchase_units: [{
+            amount: { value: grandTotal }
+          }]
+        }),
+        onApprove: (data, actions) => actions.order.capture().then(details => {
+          alert('Transaction completed by ' + details.payer.name.given_name);
+        })
+      }).render('#paypal-button-container');
     }
+  }
   
     function removeFromCart(index) {
       cart.splice(index, 1);
