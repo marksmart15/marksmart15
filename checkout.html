@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
+</head>
+<body>
+<header>
+    <h1>Julianna Jarvis Art</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#about">About</a>
+      <a href="checkout.html" class="cart-link">
+        <img src="images/cart.png" alt="Cart">
+        <span class="cart-count">0</span>
+      </a>
+    </nav>
+  </header>
+  
+  <div id="content">
+    <h2>Your Cart</h2>
+    <div id="cart-items">
+      <p>Your cart is empty.</p>
+    </div>
+    <div class="summary" id="summary">
+      <!-- Summary and Tax will be injected here -->
+    </div>
+    <div id="paypal-button-container"></div>
+  </div>
+  
+  <footer>
+    © 2023 Julianna Jarvis
+  </footer>
+  
+  <script>
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartCountElement = document.querySelector('.cart-count');
+
+    if (cart.length > 0) {
+      cartCountElement.textContent = cart.length;
+      cartCountElement.style.display = 'inline';
+    } else {
+      cartCountElement.style.display = 'none';
+    }
+  
+    function renderCart() {
+      if (cart.length > 0) {
+        document.getElementById('cart-items').innerHTML = cart.map((art, index) => `
+          <div class="cart-item">
+            <img src="${art.image}" alt="${art.title}">
+            <div>
+              <h3>${art.title}</h3>
+              <p><strong>Price:</strong> ${art.price}</p>
+            </div>
+            <button onclick="removeFromCart(${index})">Remove</button>
+          </div>
+        `).join('');
+        updateSummary();
+      } else {
+        document.getElementById('cart-items').innerHTML = '<p>Your cart is empty.</p>';
+        document.getElementById('summary').innerHTML = '';
+      }
+    }
+  
+    function updateSummary() {
+      const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0);
+      const tax = total * 0.12;
+      const grandTotal = total + tax.toFixed(2);
+      document.getElementById('summary').innerHTML = `
+        <p><strong>Subtotal:</strong> $${total.toFixed(2)}</p>
+        <p><strong>Tax (12%):</strong> $${tax.toFixed(2)}</p>
+        <p><strong>Total:</strong> $${grandTotal.toFixed(2)}</p>
+      `;
+
+      paypal.Buttons().close();
+      paypal.Buttons({
+        createOrder: function(data, actions) {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: grandTotal.toFixed(2)
+              }
+            }]
+          });
+        },
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(details) {
+            alert('Transaction completed by ' + details.payer.name.given_name);
+          });
+        }
+      }).render('#paypal-button-container');
+    }
+  
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+      cartCountElement.textContent = cart.length;
+    }
+  
+    renderCart();
+  </script>
+</body>
+</html>

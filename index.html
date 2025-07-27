@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Julianna Jarvis Art</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Julianna Jarvis Art</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#about">About</a>
+      <a href="checkout.html" class="cart-link">
+        <img src="images/cart.png" alt="Cart">
+        <span class="cart-count">0</span>
+      </a>
+    </nav>
+  </header>
+
+  <div class="gallery">
+    <div class="artwork">
+      <a href="artwork.html?id=1">
+        <img src="images/painting1.jpg" alt="Evening Sky">
+      </a>
+      <div class="artwork-content">
+        <h3>Evening Sky</h3>
+        <p><strong>Description:</strong> A soft landscape in acrylic.</p>
+        <p><strong>Size:</strong> 16x20"</p>
+        <p><strong>Price:</strong> $200</p>
+      </div>
+    </div>
+
+    <div class="artwork">
+      <a href="artwork.html?id=2">
+        <img src="images/painting2.jpg" alt="Dreamscape">
+      </a>
+      <div class="artwork-content">
+        <h3>Dreamscape</h3>
+        <p><strong>Description:</strong> Surreal clouds in watercolor.</p>
+        <p><strong>Size:</strong> 12x12"</p>
+        <p><strong>Price:</strong> $150</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2023 Julianna Jarvis
+  </footer>
+
+  <script>
+   const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cartCountElement = document.querySelector('.cart-count');
+
+  if (cart.length > 0) {
+    cartCountElement.textContent = cart.length;
+    cartCountElement.style.display = 'inline';
+  } else {
+    cartCountElement.style.display = 'none';
+  }
+  </script>
+</body>
+</html>

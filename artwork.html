@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artwork Detail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  </head>
+<body>
+    <header>
+        <h1>Julianna Jarvis Art</h1>
+        <nav>
+          <a href="index.html">Home</a>
+          <a href="#about">About</a>
+          <a href="checkout.html" class="cart-link">
+            <img src="images/cart.png" alt="Cart">
+            <span class="cart-count">0</span>
+          </a>
+        </nav>
+      </header>
+
+  <div id="content">
+    <h1 id="art-title">Loading...</h1>
+    <img id="art-image" src="" alt="Artwork">
+    <p><strong>Description:</strong> <span id="art-description"></span></p>
+    <p><strong>Size:</strong> <span id="art-size"></span></p>
+    <p><strong>Price:</strong> <span id="art-price"></span></p>
+    <a class="btn" href="#" onclick="addToCart()">Add to Cart</a>
+  </div>
+
+  <div id="modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <p>Item added to cart!</p>
+      <button onclick="goToCheckout()">Checkout</button>
+      <button onclick="keepShopping()">Keep Shopping</button>
+    </div>
+  </div>
+
+  <footer>
+    © 2023 Julianna Jarvis
+  </footer>
+
+  <script>
+    const artworks = {
+      "1": {
+        title: "Evening Sky",
+        image: "images/painting1.jpg",
+        description: "A soft landscape in acrylic.",
+        size: "16x20\"",
+        price: "$200"
+      },
+      "2": {
+        title: "Dreamscape",
+        image: "images/painting2.jpg",
+        description: "Surreal clouds in watercolor.",
+        size: "12x12\"",
+        price: "$150"
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    const art = artworks[id];
+    if (art) {
+      document.getElementById("art-title").textContent = art.title;
+      document.getElementById("art-image").src = art.image;
+      document.getElementById("art-image").alt = art.title;
+      document.getElementById("art-description").textContent = art.description;
+      document.getElementById("art-size").textContent = art.size;
+      document.getElementById("art-price").textContent = art.price;
+    } else {
+      document.body.innerHTML = "<h1>Artwork Not Found</h1><p>Please check the link or return to the gallery.</p>";
+    }
+
+    function addToCart() {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  if (!cart.find(item => item.title === art.title)) {
+    cart.push(art);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    document.querySelector('.cart-count').textContent = cart.length;
+    showModal();
+  } else {
+    alert('This item is already in your cart.');
+  }
+}
+
+function showModal() {
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function goToCheckout() {
+  window.location.href = 'checkout.html';
+}
+
+function keepShopping() {
+  window.location.href = 'index.html';
+}
+
+// Add close modal on outside click (optional)
+window.onclick = function(event) {
+  const modal = document.getElementById('modal');
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+}
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cartCountElement = document.querySelector('.cart-count');
+
+  if (cart.length > 0) {
+    cartCountElement.textContent = cart.length;
+    cartCountElement.style.display = 'inline';
+  } else {
+    cartCountElement.style.display = 'none';
+  }
+
+  </script>
+</body>
+</html>
