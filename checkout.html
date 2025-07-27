@@ -6,7 +6,7 @@
   <title>Checkout</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AcXlo_UDik9Bied_WM3fOyems83Ode9djTBk9cmqCtqGgSt2Nu4pSk24OANf0KpHCNxilEAE8WKcakyb"></script>
 </head>
 <body>
 <header>
@@ -33,13 +33,13 @@
   </div>
   
   <footer>
-    © 2023 Julianna Jarvis
+    © 2025 Julianna Jarvis
   </footer>
   
   <script>
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartCountElement = document.querySelector('.cart-count');
-
+  
     if (cart.length > 0) {
       cartCountElement.textContent = cart.length;
       cartCountElement.style.display = 'inline';
@@ -63,36 +63,36 @@
       } else {
         document.getElementById('cart-items').innerHTML = '<p>Your cart is empty.</p>';
         document.getElementById('summary').innerHTML = '';
+        document.getElementById('paypal-button-container').innerHTML = ''; // Clear PayPal buttons when empty
       }
     }
   
     function updateSummary() {
       const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0);
       const tax = total * 0.12;
-      const grandTotal = total + tax.toFixed(2);
-      document.getElementById('summary').innerHTML = `
+      const grandTotal = (total + tax).toFixed(2);
+  
+      const summaryHTML = cart.length > 0 ? `
         <p><strong>Subtotal:</strong> $${total.toFixed(2)}</p>
         <p><strong>Tax (12%):</strong> $${tax.toFixed(2)}</p>
-        <p><strong>Total:</strong> $${grandTotal.toFixed(2)}</p>
-      `;
-
-      paypal.Buttons().close();
-      paypal.Buttons({
-        createOrder: function(data, actions) {
-          return actions.order.create({
+        <p><strong>Total:</strong> $${grandTotal}</p>
+      ` : '';
+  
+      document.getElementById('summary').innerHTML = summaryHTML;
+  
+      if (cart.length > 0) {
+        document.getElementById('paypal-button-container').innerHTML = ''; // Ensure the container is cleared
+        paypal.Buttons({
+          createOrder: (data, actions) => actions.order.create({
             purchase_units: [{
-              amount: {
-                value: grandTotal.toFixed(2)
-              }
+              amount: { value: grandTotal }
             }]
-          });
-        },
-        onApprove: function(data, actions) {
-          return actions.order.capture().then(function(details) {
+          }),
+          onApprove: (data, actions) => actions.order.capture().then(details => {
             alert('Transaction completed by ' + details.payer.name.given_name);
-          });
-        }
-      }).render('#paypal-button-container');
+          })
+        }).render('#paypal-button-container');
+      }
     }
   
     function removeFromCart(index) {
